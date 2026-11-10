@@ -1,0 +1,40 @@
+[workspace]
+authors = ["Marius S <39998+winding-lines@users.noreply.github.com>"]
+channels = ["https://conda.modular.com/max", "conda-forge"]
+name = "encoder.mojo"
+version = "0.0.0"
+description = "BERT-family text encoders in Mojo, on max-core (CPU and GPU)."
+platforms = ["osx-arm64", "linux-aarch64", "linux-64"]
+
+# max-core ships linalg/nn/layout as .mojoc packages and needs no Python.
+# Stable matches the compiler the magmalake stack is on (mojo 1.2.0).
+[feature.stable.dependencies]
+max-core = "==26.7.0"
+mojo = "==1.2.0"
+
+[feature.nightly]
+channels = ["https://conda.modular.com/max-nightly", "conda-forge"]
+
+[feature.nightly.dependencies]
+max-core = "==26.8.0.dev2026110905"
+mojo = "==1.3.0.dev2026110905"
+
+# Shared by both environments: mojo links with a C compiler; containers have
+# none, and conda's default sysroot is older than the glibc 2.34 the Modular
+# runtime libraries need.
+[feature.common.target.linux-aarch64.dependencies]
+gcc = ">=13"
+sysroot_linux-aarch64 = ">=2.34"
+
+[feature.common.target.linux-64.dependencies]
+gcc = ">=13"
+sysroot_linux-64 = ">=2.34"
+
+[feature.common.tasks]
+mkbuild = "mkdir -p build"
+smoke-cpu = { cmd = "mojo build -O3 smoke/cpu.mojo -o build/smoke-cpu && ./build/smoke-cpu", depends-on = ["mkbuild"] }
+smoke-gpu = { cmd = "mojo build -O3 smoke/gpu.mojo -o build/smoke-gpu && ./build/smoke-gpu", depends-on = ["mkbuild"] }
+
+[environments]
+default = { features = ["stable", "common"] }
+nightly = { features = ["nightly", "common"] }

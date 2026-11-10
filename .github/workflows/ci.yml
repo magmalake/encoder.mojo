@@ -1,0 +1,47 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke-cpu:
+    strategy:
+      fail-fast: false
+      matrix:
+        # ubuntu-24.04-arm is the Hetzner CAX architecture; GitHub's runners
+        # have no GPU, so smoke-gpu runs by hand on Apple silicon.
+        os: [ubuntu-24.04-arm, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.10.2
+        with:
+          # Pinned: pixi.lock is written by this version.
+          pixi-version: v0.78.0
+          environments: default
+      - run: pixi run smoke-cpu
+
+  # The one required check: every job above must succeed.
+  ci:
+    if: ${{ always() }}
+    needs: [smoke-cpu]
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          needs = json.loads(os.environ["NEEDS"])
+          bad = {k: v["result"] for k, v in needs.items() if v["result"] != "success"}
+          print("results:", {k: v["result"] for k, v in needs.items()})
+          if bad:
+              sys.exit(f"did not succeed: {bad}")
+          PY
