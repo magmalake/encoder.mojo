@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **Less memory to load a model:** the safetensors file is read with its size known, so loading bge-small takes 271 MB instead of 400 MB.
+
 ## 0.1.0 (2026-11-09)
 
 The first release. `Encoder(dir).encode(texts)` returns L2-normalized
