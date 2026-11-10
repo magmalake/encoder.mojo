@@ -33,6 +33,21 @@ warm-up.
 | `nn.softmax.softmax_2_pass`, 128 | err 1.5e-8 | err 1.5e-8 |
 | `nn.activations.gelu` (exact, erf) | err 4.8e-7 | err 4.8e-7 |
 
+GPU, `linalg.matmul.matmul[transpose_b=True]` through `DeviceContext` on the
+Apple M4. Each figure is the average of 20 calls. The error is against a
+float64 loop and stays at 8e-5 or below:
+
+| Shape | Time | GFLOP/s |
+| --- | --- | --- |
+| 128×384 · 384×384 | 0.06 ms | 650 |
+| 128×384 · 1536×384 | 0.23 ms | 640 |
+| 128×1536 · 384×1536 | 0.18 ms | 845 |
+| 4096×384 · 1536×384 | 1.77 ms | 2,730 |
+
+At one 128-token sequence the M4's GPU is slower than its CPU, which runs
+matmul through Accelerate. It pays off only on large batches (4,096 rows
+above).
+
 What this means for the encoder:
 
 - **No Python at runtime.** The linux-aarch64 binary is 420 KB. Besides libc it
@@ -42,9 +57,10 @@ What this means for the encoder:
 - **Linux needs a C compiler and glibc ≥ 2.34 at build time.** `pixi.toml` adds
   conda-forge `gcc` and `sysroot_linux-*` ≥ 2.34. With conda's default sysroot,
   the link fails on `dlerror@GLIBC_2.34`.
-- **The GPU path needs the Metal Toolchain.** `mojo build` of
-  [`smoke/gpu.mojo`](smoke/gpu.mojo) stops with "missing Metal Toolchain"
-  (`xcodebuild -downloadComponent MetalToolchain`), on stable and on the nightly.
+- **The GPU path works on Metal.** It needs Xcode's Metal Toolchain at build
+  time (`xcodebuild -downloadComponent MetalToolchain`). Without it, `mojo build`
+  stops with "missing Metal Toolchain".
+
 - **Pin stable.** The nightly (26.8.0.dev2026110905) breaks these entry points
   week to week:
   - `target` parameters were removed from `matmul` and `layer_norm`, and are
