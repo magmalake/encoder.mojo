@@ -1,0 +1,4 @@
+name = "encoder-mojo"
+version = "0.1.0"
+description = "BERT-family text encoders on max-core: WordPiece tokenizer, safetensors loader and CPU forward pass; text in, normalized sentence embeddings out, no Python at runtime"
+tags = ["embeddings", "bert", "nlp", "inference", "max", "magmalake"]

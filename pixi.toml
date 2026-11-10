@@ -2,9 +2,36 @@
 authors = ["Marius S <39998+winding-lines@users.noreply.github.com>"]
 channels = ["https://conda.modular.com/max", "conda-forge"]
 name = "encoder.mojo"
-version = "0.0.0"
-description = "BERT-family text encoders in Mojo, on max-core (CPU and GPU)."
+version = "0.1.0"
+description = "BERT-family text encoders in Mojo, on max-core: text in, normalized sentence embeddings out, no Python at runtime."
+license = "Apache-2.0"
+preview = ["pixi-build"]
 platforms = ["osx-arm64", "linux-aarch64", "linux-64"]
+
+# encoder as mojoshelf tin encoder-mojo: the `encoder` package.
+[package]
+name = "encoder-mojo"
+version = "0.1.0"
+
+[package.build]
+backend = { name = "pixi-build-mojo", version = "0.*" }
+
+[package.build.config.pkg]
+path = "src/encoder"
+name = "encoder"
+# max-core's .mojoc files (linalg, nn, layout, max), which it installs there.
+extra-args = ["-I", "$PREFIX/lib/mojo"]
+
+[package.host-dependencies]
+mojo-compiler = "==1.2.0"
+max-core = "==26.7.0"
+
+[package.build-dependencies]
+mojo-compiler = "==1.2.0"
+
+[package.run-dependencies]
+mojo-compiler = ">=1.2.0,<2"
+max-core = "==26.7.0"
 
 # max-core ships linalg/nn/layout as .mojoc packages and needs no Python.
 # Stable matches the compiler the magmalake stack is on (mojo 1.2.0).
