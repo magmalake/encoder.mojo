@@ -7,6 +7,7 @@ are relative to the end of the header.
 
 from std.collections import Dict
 from std.memory import bitcast
+from std.os import stat
 
 from .json import JsonCursor
 
@@ -25,8 +26,12 @@ struct SafeTensors(Movable):
     var tensors: Dict[String, TensorInfo]
 
     def __init__(out self, path: String) raises:
+        # Read with the size known: an unsized read grows its buffer as it
+        # goes and costs about three times the file (400 MB of memory for
+        # bge-small's 133 MB), which the process doesn't get back.
+        var size = Int(stat(path).st_size)
         with open(path, "r") as f:
-            self.data = f.read_bytes()
+            self.data = f.read_bytes(size)
         if len(self.data) < 8:
             raise Error(path, ": too short for a safetensors file")
         var n = 0
