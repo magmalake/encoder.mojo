@@ -7,7 +7,7 @@ whole batch and attention only ever looks inside one sequence. Nothing is
 padded.
 """
 
-from std.math import erf, exp, sqrt
+from std.math import exp, sqrt
 from std.sys.info import simd_width_of
 
 from max.algorithm import parallelize
