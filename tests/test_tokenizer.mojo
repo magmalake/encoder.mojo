@@ -1,7 +1,6 @@
 # Token ids match HF `tokenizers` on every fixture input, for each model.
 # Needs the model files in build/models/ (tools/make_fixtures.py).
 
-from std.sys import argv
 
 from encoder import WordPiece
 

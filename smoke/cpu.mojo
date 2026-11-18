@@ -2,7 +2,7 @@
 # Each kernel runs at an encoder-sized shape and is checked against a naive
 # loop. Prints one line per kernel; raises on the first mismatch.
 
-from std.math import erf, exp, rsqrt, sqrt
+from std.math import erf, exp, sqrt
 from std.random import random_float64, seed
 from std.sys.info import simd_width_of
 from std.time import perf_counter_ns
