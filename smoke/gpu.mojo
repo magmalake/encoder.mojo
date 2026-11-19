@@ -33,12 +33,12 @@ def smoke_matmul[K: Int, N: Int](ctx: DeviceContext, m: Int) raises:
     var b = TileTensor(b_d, row_major(Idx[N], Idx[K]))
     var c = TileTensor(c_d, row_major(m, Idx[N]))
 
-    matmul[transpose_b=True, target="gpu"](c, a, b, ctx)  # warm-up + compile
+    matmul[transpose_b=True](c, a, b, ctx)  # warm-up + compile
     ctx.synchronize()
     comptime REPS = 20
     var t0 = perf_counter_ns()
     for _ in range(REPS):
-        matmul[transpose_b=True, target="gpu"](c, a, b, ctx)
+        matmul[transpose_b=True](c, a, b, ctx)
     ctx.synchronize()
     var ns = Int(perf_counter_ns() - t0) // REPS
 
@@ -65,7 +65,7 @@ def smoke_matmul[K: Int, N: Int](ctx: DeviceContext, m: Int) raises:
 def main() raises:
     seed(42)
     with DeviceContext() as ctx:
-        print("device:", ctx.name())
+        print("device:", ctx.device().get_name())
         smoke_matmul[384, 384](ctx, 128)
         smoke_matmul[384, 1536](ctx, 128)
         smoke_matmul[1536, 384](ctx, 128)

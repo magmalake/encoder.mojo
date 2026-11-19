@@ -10,7 +10,7 @@ from std.time import perf_counter_ns
 from layout import Coord, TileTensor, row_major
 from linalg.matmul import matmul
 from nn.activations import gelu
-from nn.softmax import softmax_2_pass
+from nn.softmax import softmax_3_pass
 from builtin_kernels.rowwise_normalization import layer_norm
 
 from std.utils.index import Index, IndexList
@@ -93,7 +93,7 @@ def smoke_layer_norm(rows: Int, cols: Int) raises:
         )
 
     var t0 = perf_counter_ns()
-    layer_norm[F32, 2, target="cpu"](
+    layer_norm[F32, 2](
         input_fn, output_fn, Coord(shape), cols, gamma, beta, eps
     )
     var ns = Int(perf_counter_ns() - t0)
@@ -125,8 +125,12 @@ def smoke_softmax(n: Int) raises:
     var in_tt = TileTensor(in_l, row_major(n))
     var out_tt = TileTensor(out_l, row_major(n))
 
+    @inline(.always)
+    def input_fn[width: Int](idx: Int) {var in_tt} -> SIMD[F32, width]:
+        return in_tt.raw_load[width=width](idx)
+
     var t0 = perf_counter_ns()
-    softmax_2_pass[simd_width_of[F32](), F32](out_tt, in_tt)
+    softmax_3_pass[simd_width_of[F32]()](input_fn, out_tt)
     var ns = Int(perf_counter_ns() - t0)
 
     var mx = in_l[0]
