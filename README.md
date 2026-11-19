@@ -113,15 +113,14 @@ What this means for the encoder:
   time (`xcodebuild -downloadComponent MetalToolchain`). Without it, `mojo build`
   stops with "missing Metal Toolchain".
 
-- **Pin stable.** The nightly (26.8.0.dev2026110905) breaks these entry points
-  week to week:
-  - `target` parameters were removed from `matmul` and `layer_norm`, and are
-    now taken from the `DeviceContext` type.
-  - `softmax_2_pass` is gone.
-  - `UnsafePointer` and the `alloc(count, alignment=)` form were removed from
-    the stdlib.
-
-  The `nightly` env is kept to track the next port.
+- **Pin exactly.** The tin is pinned to max-core 26.8.0.dev2026111805 and Mojo
+  1.3.0.dev2026111805, the nightly every magmalake tin is on. max-core's entry
+  points move between builds. On this one:
+  - `matmul` and `layer_norm` take no `target` parameter; it comes from the
+    `DeviceContext` passed in (none means CPU).
+  - `softmax_2_pass` is gone, so the CPU smoke test runs `softmax_3_pass`.
+  - `UnsafePointer` and the `alloc(count, alignment=)` form are gone from the
+    stdlib.
 - **macOS CPU matmul** is fast because on Apple silicon it goes through
   Accelerate (`linalg/matmul/cpu/apple_accelerate.mojo`). Linux gets max-core's
   own NEON kernels.

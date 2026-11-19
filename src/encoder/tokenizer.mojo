@@ -23,7 +23,7 @@ comptime UNK = "[UNK]"
 comptime MAX_CHARS_PER_WORD = 100
 
 
-def _hex(s: StringSlice) raises -> UInt32:
+def _hex(s: StringSpan) raises -> UInt32:
     var v: UInt32 = 0
     for b in s.as_bytes():
         var c = UInt32(b)
