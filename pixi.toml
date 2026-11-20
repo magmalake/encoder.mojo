@@ -2,7 +2,7 @@
 authors = ["Marius S <39998+winding-lines@users.noreply.github.com>"]
 channels = ["https://conda.modular.com/max-nightly", "conda-forge"]
 name = "encoder.mojo"
-version = "0.1.0"
+version = "0.2.0"
 description = "BERT-family text encoders in Mojo, on max-core: text in, normalized sentence embeddings out, no Python at runtime."
 license = "Apache-2.0"
 preview = ["pixi-build"]
@@ -11,7 +11,7 @@ platforms = ["osx-arm64", "linux-aarch64", "linux-64"]
 # encoder as mojoshelf tin encoder-mojo: the `encoder` package.
 [package]
 name = "encoder-mojo"
-version = "0.1.0"
+version = "0.2.0"
 
 [package.build]
 backend = { name = "pixi-build-mojo", version = "0.*" }

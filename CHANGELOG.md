@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.2.0 - 2026-11-20
+
 - **Less memory to load a model:** the safetensors file is read with its size known, so loading bge-small takes 271 MB instead of 400 MB.
 
 ## 0.1.0 (2026-11-09)
