@@ -113,8 +113,8 @@ What this means for the encoder:
   time (`xcodebuild -downloadComponent MetalToolchain`). Without it, `mojo build`
   stops with "missing Metal Toolchain".
 
-- **Pin exactly.** The tin is pinned to max-core 26.8.0.dev2026111805 and Mojo
-  1.3.0.dev2026111805, the nightly every magmalake tin is on. max-core's entry
+- **Pin exactly.** The tin is pinned to max-core 26.8.0.dev2026112505 and Mojo
+  1.3.0.dev2026112505, the nightly every magmalake tin is on. max-core's entry
   points move between builds. On this one:
   - `matmul` and `layer_norm` take no `target` parameter; it comes from the
     `DeviceContext` passed in (none means CPU).
