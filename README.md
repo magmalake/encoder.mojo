@@ -1,5 +1,7 @@
 # encoder.mojo
 
+[![Used by](https://mojourney.dev/badge/magmalake/encoder.mojo/used-by.svg)](https://mojourney.dev/repos/magmalake/encoder.mojo#used-by) [![Mojo version](https://mojourney.dev/badge/magmalake/encoder.mojo/mojo.svg)](https://mojourney.dev/repos/magmalake/encoder.mojo)
+
 BERT-family text encoders in Mojo, on max-core (CPU and GPU).
 
 A library a Mojo pipeline binary links to turn text into sentence
